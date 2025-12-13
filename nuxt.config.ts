@@ -18,8 +18,8 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/admin/login',
       callback: '/confirm',
-      include: ['/admin(/*)?'], // Hanya proteksi folder admin
-      exclude: ['/admin/login', '/'], // Public routes
+      include: ['/admin(/*)?'],
+      exclude: ['/admin/login', '/'],
       cookieRedirect: true,
     }
   },
@@ -32,11 +32,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     databaseUrl: process.env.DATABASE_URL,
     openRouterKey: process.env.OPENROUTER_KEY,
-    cloudinaryName: process.env.CLOUDINARY_CLOUD_NAME,
-    cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
-    cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
-    sessionPassword: process.env.NUXT_SESSION_PASSWORD,
-    adminEmail: process.env.ADMIN_EMAIL,
+    
     public: {
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
     }

@@ -11,6 +11,13 @@
         <NuxtLink to="/admin/projects" class="block rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-200">
           Projects
         </NuxtLink>
+        <NuxtLink to="/admin/blog" class="block rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-200">
+          Blog
+        </NuxtLink>
+        <NuxtLink to="/admin/settings" class="block rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-200">
+          Settings
+        </NuxtLink>
+        
         <NuxtLink to="/" class="block rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-black mt-8 border-t pt-4">
           ← Back to Site
         </NuxtLink>
