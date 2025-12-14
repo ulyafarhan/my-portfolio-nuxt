@@ -1,21 +1,23 @@
-export default defineEventHandler(async (event) => {
+export default defineCachedEventHandler(async (event) => {
   try {
     const posts = await prisma.blogPost.findMany({
-      orderBy: {
-        createdAt: 'desc'
-      },
+      where: { isPublished: true }, 
+      orderBy: { createdAt: 'desc' },
       select: {
         id: true,
         title: true,
         slug: true,
         excerpt: true,
-        isPublished: true,
-        createdAt: true,
-        // Kita tidak ambil 'content' di sini agar payload ringan
+        coverImage: true,
+        createdAt: true
       }
     })
     return posts
   } catch (error) {
-    throw createError({ statusCode: 500, statusMessage: 'Failed to fetch posts' })
+    throw createError({ statusCode: 500, statusMessage: 'DB Error' })
   }
+}, {
+  maxAge: 60 * 60, 
+  swr: true,       
+  name: 'blog-list'
 })

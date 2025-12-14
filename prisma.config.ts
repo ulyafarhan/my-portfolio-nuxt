@@ -11,7 +11,13 @@ export default defineConfig({
   // Path ke schema
   schema: 'prisma/schema.prisma',
   
-  // Sesuai Docs: Gunakan 'datasource' (TUNGGAL), bukan 'datasources'
+  // Tambahkan bagian migrations untuk mendefinisikan perintah seed
+  migrations: {
+    // Gunakan tsx untuk menjalankan file seed.ts
+    // Pastikan 'tsx' sudah terinstall sebagai devDependency (sudah ada di package.json)
+    seed: 'tsx prisma/seed.ts',
+  },
+  
   datasource: {
     url: process.env.DIRECT_URL || process.env.DATABASE_URL || ''
   }

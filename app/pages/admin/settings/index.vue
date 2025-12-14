@@ -1,116 +1,133 @@
 <template>
-  <div class="p-8 max-w-4xl">
+  <div class="p-8 max-w-5xl mx-auto">
     <div class="mb-8">
       <h1 class="text-3xl font-bold tracking-tight">Global Settings</h1>
-      <p class="text-muted-foreground">Konfigurasi profil publik dan informasi kontak.</p>
+      <p class="text-muted-foreground">Konfigurasi identitas situs, SEO, dan profil.</p>
     </div>
 
-    <div class="rounded-xl border bg-white p-6 shadow-sm">
-      <form @submit.prevent="saveSettings" class="space-y-6">
-        
-        <div class="space-y-4">
-          <h2 class="text-lg font-semibold border-b pb-2">Profile Information</h2>
-          
-          <div class="grid gap-2">
-            <label class="text-sm font-medium">Short Bio (Hero Section)</label>
-            <textarea 
-              v-model="form.bio_short" 
-              rows="3" 
-              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-black focus:outline-none"
-              placeholder="Fullstack Developer obsessed with..."
-            ></textarea>
-            <p class="text-xs text-gray-500">Muncul di halaman utama.</p>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <Card class="h-fit">
+        <CardHeader>
+          <CardTitle>Branding & Assets</CardTitle>
+          <CardDescription>Logo dan Favicon situs.</CardDescription>
+        </CardHeader>
+        <CardContent class="space-y-6">
+          <div class="space-y-2">
+            <Label>Logo Situs (Header)</Label>
+            <ImageUpload v-model="form.site_logo" />
+            <p class="text-xs text-muted-foreground">Disarankan format PNG/SVG transparan.</p>
           </div>
-
-          <div class="grid gap-2">
-            <label class="text-sm font-medium">Full Bio (About Page)</label>
-            <textarea 
-              v-model="form.bio_long" 
-              rows="5" 
-              class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-black focus:outline-none"
-              placeholder="Ceritakan detail pengalaman anda..."
-            ></textarea>
-          </div>
-        </div>
-
-        <div class="space-y-4 pt-4">
-          <h2 class="text-lg font-semibold border-b pb-2">Connect</h2>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="space-y-2">
-              <label class="text-sm font-medium">GitHub URL</label>
-              <input v-model="form.social_github" class="w-full rounded-md border px-3 py-2 text-sm" placeholder="https://github.com/..." />
+          <div class="space-y-2">
+            <Label>Favicon (Tab Browser)</Label>
+            <div class="flex gap-4 items-center">
+              <div v-if="form.site_favicon" class="h-10 w-10 border rounded p-1">
+                <img :src="form.site_favicon" class="w-full h-full object-contain" />
+              </div>
+              <div class="flex-1">
+                <Input v-model="form.site_favicon" placeholder="URL Favicon..." />
+              </div>
             </div>
+            </div>
+        </CardContent>
+      </Card>
+
+      <Card class="lg:col-span-2">
+        <CardHeader>
+          <CardTitle>Informasi Situs & Profil</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form @submit.prevent="saveSettings" class="space-y-6">
             
-            <div class="space-y-2">
-              <label class="text-sm font-medium">LinkedIn URL</label>
-              <input v-model="form.social_linkedin" class="w-full rounded-md border px-3 py-2 text-sm" placeholder="https://linkedin.com/in/..." />
+            <div class="grid md:grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <Label>Nama Situs (Site Title)</Label>
+                <Input v-model="form.site_name" placeholder="Ulya Farhan Portfolio" />
+              </div>
+               <div class="space-y-2">
+                <Label>Email Kontak</Label>
+                <Input v-model="form.contact_email" />
+              </div>
             </div>
 
             <div class="space-y-2">
-              <label class="text-sm font-medium">Email Contact</label>
-              <input v-model="form.contact_email" type="email" class="w-full rounded-md border px-3 py-2 text-sm" placeholder="me@example.com" />
+              <Label>Bio Singkat (Hero)</Label>
+              <Textarea v-model="form.bio_short" rows="2" />
             </div>
-             <div class="space-y-2">
-              <label class="text-sm font-medium">Resume / CV Link</label>
-              <input v-model="form.resume_url" class="w-full rounded-md border px-3 py-2 text-sm" placeholder="https://..." />
+
+            <div class="space-y-2">
+              <Label>Bio Lengkap (About Page)</Label>
+              <ClientOnly>
+                <TiptapEditor v-model="form.bio_long" />
+              </ClientOnly>
             </div>
-          </div>
-        </div>
 
-        <div class="pt-4 flex justify-end">
-          <button 
-            type="submit" 
-            :disabled="loading"
-            class="rounded-md bg-black px-8 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50 transition-all"
-          >
-            {{ loading ? 'Saving...' : 'Save Changes' }}
-          </button>
-        </div>
+            <div class="grid md:grid-cols-2 gap-4 pt-4 border-t">
+              <div class="space-y-2">
+                <Label>Resume / CV Link</Label>
+                <Input v-model="form.resume_url" placeholder="https://..." />
+              </div>
+              <div class="space-y-2">
+                <Label>Hero CTA Text</Label>
+                <Input v-model="form.hero_cta_text" placeholder="Explore Work" />
+              </div>
+            </div>
 
-      </form>
+            <div class="flex justify-end pt-4">
+              <Button type="submit" :disabled="loading">
+                <Spinner v-if="loading" class="mr-2" />
+                Simpan Perubahan
+              </Button>
+            </div>
+
+          </form>
+        </CardContent>
+      </Card>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { toast } from 'vue-sonner'
+import ImageUpload from '@/components/admin/ImageUpload.vue'
+import TiptapEditor from '@/components/admin/TiptapEditor.vue'
 
-definePageMeta({
-  layout: 'admin'
-})
+// Shadcn imports
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import Spinner from '@/components/ui/spinner/Spinner.vue'
+
+definePageMeta({ layout: 'admin' })
 
 const loading = ref(false)
+const { data: settings, refresh } = await useFetch('/api/settings')
 
-// State Form Default
 const form = reactive({
+  site_name: 'DevPort',
+  site_logo: '',
+  site_favicon: '',
   bio_short: '',
   bio_long: '',
-  social_github: '',
-  social_linkedin: '',
   contact_email: '',
-  resume_url: ''
+  resume_url: '',
+  hero_cta_text: 'Explore Work'
 })
 
-// Fetch Data Awal
-const { data: settings } = await useFetch('/api/settings')
-
-// Isi form jika data ada di DB
+// Isi form jika data ada
 if (settings.value) {
   Object.assign(form, settings.value)
 }
 
-// Handle Save
 const saveSettings = async () => {
   loading.value = true
   try {
-    await $fetch('/api/settings', {
-      method: 'POST',
-      body: form
-    })
-    toast.success('Pengaturan berhasil disimpan!')
+    await $fetch('/api/settings', { method: 'POST', body: form })
+    toast.success('Pengaturan disimpan!')
+    await refresh()
   } catch (error) {
-    toast.error('Gagal menyimpan pengaturan')
+    toast.error('Gagal menyimpan')
   } finally {
     loading.value = false
   }

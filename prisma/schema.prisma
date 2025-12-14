@@ -1,16 +1,16 @@
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["driverAdapters"] 
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 model Admin {
   id        String   @id @default(uuid())
   email     String   @unique
-  password  String   // Hashed
+  password  String
   updatedAt DateTime @updatedAt
 }
 
@@ -19,8 +19,8 @@ model Project {
   slug        String   @unique
   title       String
   description String
-  thumbnail   String   // Cloudinary URL
-  techStack   Json     // JsonB: ["Vue", "Nuxt", "Postgres"]
+  thumbnail   String
+  techStack   Json
   repoUrl     String?
   demoUrl     String?
   isFeatured  Boolean  @default(false)
@@ -34,7 +34,7 @@ model BlogPost {
   id          String   @id @default(uuid())
   slug        String   @unique
   title       String
-  content     String   // Markdown content
+  content     String
   excerpt     String?
   coverImage  String?
   isPublished Boolean  @default(false)
@@ -43,6 +43,91 @@ model BlogPost {
 }
 
 model Setting {
-  key   String @id @unique // e.g., "bio_short", "social_linkedin"
+  key   String @id @unique
   value String
+}
+
+model Experience {
+  id          String   @id @default(uuid())
+  position    String
+  company     String
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id         String   @id @default(uuid())
+  clientName String
+  company    String?
+  role       String?
+  content    String
+  avatarUrl  String?
+  rating     Int      @default(5)
+  isShow     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+}
+
+model SocialLink {
+  id       String  @id @default(uuid())
+  platform String
+  url      String
+  iconKey  String?
+  order    Int     @default(0)
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  name       String
+  email      String
+  subject    String?
+  content    String   @db.Text
+  status     String   @default("UNREAD")
+  isArchived Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  action    String
+  details   String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+model PageSection {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  label     String
+  component String
+  isVisible Boolean  @default(true)
+  order     Int      @default(0)
+  content   Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  price       String
+  features    String[]
+  isPopular   Boolean  @default(false)
+  ctaUrl      String?
+  iconKey     String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model Snippet {
+  id          String   @id @default(uuid())
+  title       String
+  language    String
+  code        String   @db.Text
+  description String?
+  createdAt   DateTime @default(now())
 }

@@ -1,2 +1,10 @@
-User-Agent: *
-Disallow:
+User-agent: *
+Allow: /
+
+# Disallow Admin Panel
+Disallow: /admin
+Disallow: /login
+Disallow: /api
+
+# Sitemap Location
+Sitemap: https://ulyafarhan.com/sitemap.xml
