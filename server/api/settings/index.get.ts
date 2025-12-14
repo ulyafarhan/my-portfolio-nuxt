@@ -1,3 +1,5 @@
+import { prisma } from '../../utils/prisma'
+
 export default defineEventHandler(async (event) => {
   try {
     // 'prisma' otomatis tersedia (Auto-import dari server/utils)

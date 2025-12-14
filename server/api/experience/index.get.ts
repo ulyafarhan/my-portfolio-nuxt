@@ -1,3 +1,5 @@
+import { prisma } from '../../utils/prisma'
+
 export default defineEventHandler(async (event) => {
   try {
     // Urutkan dari yang terbaru (startDate desc)

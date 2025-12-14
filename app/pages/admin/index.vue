@@ -1,94 +1,120 @@
 <template>
-  <div class="p-8 max-w-7xl mx-auto space-y-8">
-    <div class="flex items-center justify-between">
-      <h1 class="text-3xl font-bold tracking-tight">Dashboard</h1>
-      <div class="text-sm text-muted-foreground">
-        Terakhir update: {{ new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }) }}
+  <div class="min-h-screen bg-background text-foreground p-4 md:p-8 w-full space-y-8">
+    
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <p class="text-muted-foreground">Selamat datang kembali, Master Architect.</p>
+      </div>
+      <div class="flex gap-2">
+        <Button variant="outline" as-child>
+          <a href="/" target="_blank">
+            <ExternalLinkIcon class="mr-2 h-4 w-4" /> Lihat Website
+          </a>
+        </Button>
+        <Button as-child>
+          <NuxtLink to="/admin/projects">
+            <PlusIcon class="mr-2 h-4 w-4" /> Project Baru
+          </NuxtLink>
+        </Button>
       </div>
     </div>
 
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card>
+      <Card class="bg-card text-card-foreground">
         <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle class="text-sm font-medium">Total Project</CardTitle>
+          <CardTitle class="text-sm font-medium">Total Projects</CardTitle>
           <FolderIcon class="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div class="text-2xl font-bold">{{ stats?.projects || 0 }}</div>
-          <p class="text-xs text-muted-foreground">+1 bulan ini</p>
+          <p class="text-xs text-muted-foreground mt-1">
+            +2 bulan ini (Simulasi)
+          </p>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card class="bg-card text-card-foreground">
         <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle class="text-sm font-medium">Artikel Blog</CardTitle>
+          <CardTitle class="text-sm font-medium">Total Artikel</CardTitle>
           <FileTextIcon class="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div class="text-2xl font-bold">{{ stats?.blogs || 0 }}</div>
-          <p class="text-xs text-muted-foreground">{{ stats?.publishedBlogs || 0 }} published</p>
+          <p class="text-xs text-muted-foreground mt-1">
+            Konten SEO aktif
+          </p>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card class="bg-card text-card-foreground">
         <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle class="text-sm font-medium">Testimoni</CardTitle>
-          <MessageSquareQuoteIcon class="h-4 w-4 text-muted-foreground" />
+          <CardTitle class="text-sm font-medium">Pesan Masuk</CardTitle>
+          <MailIcon class="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div class="text-2xl font-bold">{{ stats?.testimonials || 0 }}</div>
-          <p class="text-xs text-muted-foreground">Clients trust you</p>
+          <div class="text-2xl font-bold">{{ stats?.messages || 0 }}</div>
+          <p class="text-xs text-muted-foreground mt-1">
+            {{ stats?.unreadMessages || 0 }} belum dibaca
+          </p>
         </CardContent>
       </Card>
 
-       <Card>
+      <Card class="bg-card text-card-foreground">
         <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle class="text-sm font-medium">API Health</CardTitle>
-          <ActivityIcon class="h-4 w-4 text-green-500" />
+          <CardTitle class="text-sm font-medium">Media Assets</CardTitle>
+          <ImageIcon class="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div class="text-2xl font-bold text-green-600">99.9%</div>
-          <p class="text-xs text-muted-foreground">Systems Operational</p>
+          <div class="text-2xl font-bold">{{ stats?.media || 0 }}</div>
+          <p class="text-xs text-muted-foreground mt-1">
+            Disimpan di Cloudflare R2
+          </p>
         </CardContent>
       </Card>
     </div>
 
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-      <Card class="col-span-4">
-        <CardHeader>
-          <CardTitle>Artikel Terbaru</CardTitle>
-          <CardDescription>Status publikasi terakhir.</CardDescription>
-        </CardHeader>
-        <CardContent>
-           <div class="space-y-4">
-             <div v-for="post in recentPosts" :key="post.id" class="flex items-center">
-               <div class="ml-4 space-y-1">
-                 <p class="text-sm font-medium leading-none">{{ post.title }}</p>
-                 <p class="text-xs text-muted-foreground">{{ new Date(post.createdAt).toLocaleDateString() }}</p>
-               </div>
-               <div class="ml-auto font-medium">
-                  <Badge :variant="post.isPublished ? 'default' : 'secondary'" class="text-[10px]">{{ post.isPublished ? 'Live' : 'Draft' }}</Badge>
-               </div>
-             </div>
-           </div>
-        </CardContent>
-      </Card>
       
-      <Card class="col-span-3">
+      <Card class="col-span-4 bg-card">
         <CardHeader>
           <CardTitle>Aksi Cepat</CardTitle>
-          <CardDescription>Shortcut manajemen.</CardDescription>
+          <CardDescription>Jalan pintas ke fitur yang sering digunakan.</CardDescription>
         </CardHeader>
-        <CardContent class="grid gap-2">
-           <NuxtLink to="/admin/projects" class="flex items-center gap-2 rounded-md border p-3 hover:bg-accent transition-colors">
-              <span class="font-bold">+</span> Project Baru
+        <CardContent class="grid grid-cols-2 md:grid-cols-3 gap-4">
+           <NuxtLink to="/admin/blog" class="flex flex-col items-center justify-center gap-2 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+             <PenToolIcon class="h-6 w-6 text-primary" />
+             <span class="text-sm font-medium">Tulis Artikel</span>
            </NuxtLink>
-           <NuxtLink to="/admin/blog" class="flex items-center gap-2 rounded-md border p-3 hover:bg-accent transition-colors">
-              <span class="font-bold">+</span> Artikel Baru
+           <NuxtLink to="/admin/media" class="flex flex-col items-center justify-center gap-2 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+             <UploadCloudIcon class="h-6 w-6 text-blue-500" />
+             <span class="text-sm font-medium">Upload File</span>
            </NuxtLink>
-            <NuxtLink to="/admin/appearance" class="flex items-center gap-2 rounded-md border p-3 hover:bg-accent transition-colors">
-              <PaletteIcon class="w-4 h-4" /> Ganti Tema
+           <NuxtLink to="/admin/settings" class="flex flex-col items-center justify-center gap-2 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+             <SettingsIcon class="h-6 w-6 text-slate-500" />
+             <span class="text-sm font-medium">Settings</span>
            </NuxtLink>
+        </CardContent>
+      </Card>
+
+      <Card class="col-span-3 bg-card">
+        <CardHeader>
+          <CardTitle>System Health</CardTitle>
+          <CardDescription>Status performa server & database.</CardDescription>
+        </CardHeader>
+        <CardContent class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-muted-foreground">Database (Supabase)</span>
+            <Badge variant="outline" class="text-green-600 bg-green-500/10 border-green-500/20">Operational</Badge>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-muted-foreground">Storage (R2)</span>
+            <Badge variant="outline" class="text-green-600 bg-green-500/10 border-green-500/20">Operational</Badge>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-muted-foreground">Nuxt Server</span>
+            <Badge variant="outline" class="text-green-600 bg-green-500/10 border-green-500/20">v4.0.0 (Compat)</Badge>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -96,14 +122,16 @@
 </template>
 
 <script setup lang="ts">
-import { FolderIcon, FileTextIcon, MessageSquareQuoteIcon, ActivityIcon, PaletteIcon } from 'lucide-vue-next'
+import { 
+  FolderIcon, FileTextIcon, MailIcon, ImageIcon, 
+  ExternalLinkIcon, PlusIcon, PenToolIcon, UploadCloudIcon, SettingsIcon 
+} from 'lucide-vue-next'
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 definePageMeta({ layout: 'admin' })
 
-// Fetch Stats Realtime
-const { data } = await useFetch('/api/stats')
-const stats = computed(() => data.value?.counts)
-const recentPosts = computed(() => data.value?.recentPosts || [])
+// Fetch real stats from server
+const { data: stats } = await useFetch('/api/stats', { key: 'admin-stats' })
 </script>

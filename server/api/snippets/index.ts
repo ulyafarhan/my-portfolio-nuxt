@@ -1,4 +1,5 @@
 import { serverSupabaseUser } from '#supabase/server'
+import { prisma } from '../../utils/prisma'
 
 export default defineEventHandler(async (event) => {
   if (event.method === 'GET') {

@@ -6,12 +6,16 @@ export default defineEventHandler(async (event) => {
   if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
 
   const id = getRouterParam(event, 'id')
+  const body = await readBody(event)
 
-  // Hapus pesan
-  const msg = await prisma.message.delete({ where: { id } })
-  
-  // Catat siapa yang menghapus (Security Feature!)
-  await logActivity(event, 'DELETE_MESSAGE', `Menghapus pesan dari ${msg.name}`)
-
-  return { success: true }
+  try {
+    return await prisma.message.update({
+      where: { id },
+      data: {
+        status: body.status, // 'READ' | 'UNREAD' | 'ARCHIVED'
+      }
+    })
+  } catch (error) {
+    throw createError({ statusCode: 500, statusMessage: 'Failed to update message status' })
+  }
 })

@@ -7,11 +7,11 @@ export default defineEventHandler(async (event) => {
 
   const id = getRouterParam(event, 'id')
 
-  // Hapus pesan
-  const msg = await prisma.message.delete({ where: { id } })
-  
-  // Catat siapa yang menghapus (Security Feature!)
-  await logActivity(event, 'DELETE_MESSAGE', `Menghapus pesan dari ${msg.name}`)
-
-  return { success: true }
+  try {
+    return await prisma.snippet.delete({
+      where: { id }
+    })
+  } catch (error) {
+    throw createError({ statusCode: 500, statusMessage: 'Failed to delete snippet' })
+  }
 })

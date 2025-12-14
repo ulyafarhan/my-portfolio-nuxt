@@ -6,12 +6,18 @@ export default defineEventHandler(async (event) => {
   if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
 
   const id = getRouterParam(event, 'id')
+  const body = await readBody(event)
 
   try {
-    await prisma.service.delete({ where: { id } })
-    return { success: true }
-  } catch (error: any) {
-    console.error('❌ Delete Service Error:', error)
-    throw createError({ statusCode: 500, statusMessage: 'Failed to delete service' })
+    return await prisma.socialLink.update({
+      where: { id },
+      data: {
+        platform: body.platform,
+        url: body.url,
+        order: body.order
+      }
+    })
+  } catch (error) {
+    throw createError({ statusCode: 500, statusMessage: 'Failed to update link' })
   }
 })

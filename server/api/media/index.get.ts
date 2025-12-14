@@ -1,37 +1,48 @@
 import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3'
+import { serverSupabaseUser } from '#supabase/server'
+import { prisma } from '../../utils/prisma'
+
 
 export default defineEventHandler(async (event) => {
-  // Konfigurasi R2 Client (Sama seperti upload)
-  const R2 = new S3Client({
+  // 1. Cek User Login
+  const user = await serverSupabaseUser(event)
+  if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+
+  // 2. Ambil Config (Konsisten dengan upload.post.ts)
+  const config = useRuntimeConfig()
+  
+  const s3 = new S3Client({
     region: 'auto',
-    endpoint: process.env.R2_ENDPOINT || '',
+    endpoint: `https://${config.r2AccountId}.r2.cloudflarestorage.com`,
     credentials: {
-      accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+      accessKeyId: config.r2AccessKeyId,
+      secretAccessKey: config.r2SecretAccessKey,
     },
   })
 
   try {
     const command = new ListObjectsV2Command({
-      Bucket: process.env.R2_BUCKET_NAME,
-      MaxKeys: 100 // Limit 100 file terbaru
+      Bucket: config.r2BucketName,
+      MaxKeys: 100
     })
 
-    const response = await R2.send(command)
+    const response = await s3.send(command)
     
-    // Format response agar lebih bersih
+    // Construct URL Publik
+    const publicDomain = config.public.r2PublicDomain?.replace(/\/$/, '')
+
     const files = response.Contents?.map((item) => ({
       key: item.Key,
-      url: `${process.env.R2_PUBLIC_DOMAIN}/${item.Key}`,
+      url: publicDomain ? `${publicDomain}/${item.Key}` : `/${item.Key}`, // Fallback
       size: item.Size,
       lastModified: item.LastModified
     })) || []
 
-    // Urutkan dari yang terbaru
+    // Sort by Date DESC
     return files.sort((a, b) => (b.lastModified?.getTime() || 0) - (a.lastModified?.getTime() || 0))
 
-  } catch (error) {
-    console.error(error)
-    throw createError({ statusCode: 500, statusMessage: 'Gagal mengambil daftar file.' })
+  } catch (error: any) {
+    console.error('Media List Error:', error)
+    throw createError({ statusCode: 500, statusMessage: error.message || 'Gagal mengambil media' })
   }
 })

@@ -1,5 +1,5 @@
 import { serverSupabaseUser } from '#supabase/server'
-// HAPUS BARIS INI: import { prisma } from '~/server/utils/prisma'
+import { prisma } from '../../utils/prisma'
 
 export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)

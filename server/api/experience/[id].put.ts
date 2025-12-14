@@ -5,21 +5,22 @@ export default defineEventHandler(async (event) => {
   const user = await serverSupabaseUser(event)
   if (!user) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
 
+  const id = getRouterParam(event, 'id')
   const body = await readBody(event)
-  
+
   try {
-    return await prisma.testimonial.create({
+    return await prisma.experience.update({
+      where: { id },
       data: {
-        clientName: body.clientName,
+        position: body.position,
         company: body.company,
-        role: body.role,
-        content: body.content,
-        avatarUrl: body.avatarUrl,
-        rating: body.rating || 5,
-        isShow: body.isShow ?? true
+        location: body.location,
+        startDate: new Date(body.startDate),
+        endDate: body.endDate ? new Date(body.endDate) : null,
+        description: body.description
       }
     })
   } catch (error) {
-    throw createError({ statusCode: 500, statusMessage: 'Failed to create testimonial' })
+    throw createError({ statusCode: 500, statusMessage: 'Failed to update experience' })
   }
 })
